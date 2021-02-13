@@ -10,6 +10,7 @@ import {
   ThemedStyledProps,
   Interpolation,
   FlattenInterpolation,
+  CSSProperties,
 } from 'styled-components/macro';
 
 /*
@@ -47,6 +48,7 @@ type MediaFunction = <P extends object>(
   first:
     | TemplateStringsArray
     | CSSObject
+    | CSSProperties
     | InterpolationFunction<ThemedStyledProps<P, DefaultTheme>>,
   ...interpolations: Array<Interpolation<ThemedStyledProps<P, DefaultTheme>>>
 ) => FlattenInterpolation<ThemedStyledProps<P, DefaultTheme>>;

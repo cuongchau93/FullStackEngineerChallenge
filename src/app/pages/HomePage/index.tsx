@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { NavBar } from 'app/components/NavBar';
-import { Masthead } from './Masthead';
 import { Features } from './Features';
 import { PageWrapper } from 'app/components/PageWrapper';
+import { LoginComponent } from './components/LoginComponent';
 
 export function HomePage() {
   return (
@@ -17,8 +17,7 @@ export function HomePage() {
       </Helmet>
       <NavBar />
       <PageWrapper>
-        <Masthead />
-        <Features />
+        <LoginComponent />
       </PageWrapper>
     </>
   );
