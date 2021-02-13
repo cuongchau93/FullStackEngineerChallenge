@@ -21,6 +21,11 @@ export const selectIsLoading = createSelector(
   homeState => homeState.loading,
 );
 
+export const selectIsLoggedin = createSelector(
+  [selectDomain],
+  homeState => homeState.userInfo !== null,
+);
+
 export const selectError = createSelector(
   [selectDomain],
   homeState => homeState.error,

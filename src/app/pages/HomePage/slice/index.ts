@@ -1,9 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { getAllByPlaceholderText } from '@testing-library/react';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { useInjectReducer, useInjectSaga } from 'utils/redux-injectors';
 import { homeSagas } from './saga';
-import { HomeState, UserInfo } from './types';
+import { HomeState, LoginPayload, UserInfo } from './types';
 
 export const initialState: HomeState = {
   userInfo: null,
@@ -14,7 +13,9 @@ const slice = createSlice({
   name: 'home',
   initialState,
   reducers: {
-    loginUser(state, action: any) {},
+    loginUser(state, action: PayloadAction<LoginPayload>) {},
+    logoutUser() {},
+    initStateIfNeeded() {},
     updateLoading(
       state,
       action: PayloadAction<{ loading: boolean; error?: string }>,

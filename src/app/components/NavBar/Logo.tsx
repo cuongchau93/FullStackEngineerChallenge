@@ -6,7 +6,6 @@ export function Logo() {
   return (
     <Wrapper>
       <Img src={PayPayIcon} alt="react-boilerplate - Logo" />
-      <Title>Feedback Management</Title>
     </Wrapper>
   );
 }

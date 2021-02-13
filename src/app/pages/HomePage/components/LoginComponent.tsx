@@ -9,6 +9,7 @@ import { Title } from './Title';
 import { selectError, selectIsLoading } from '../slice/selectors';
 import { LoadingIndicator } from 'app/components/LoadingIndicator';
 import { P } from './P';
+import { LoginPayload } from '../slice/types';
 
 export function LoginComponent() {
   const { actions } = useHomepageSlice();
@@ -17,6 +18,10 @@ export function LoginComponent() {
   const [password, setPassword] = useState('');
   const loading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
+
+  const onForgotPw = () => {
+    alert('Please contact admin');
+  };
 
   const onUsernameChanged = e => {
     setUserName(e.target.value);
@@ -29,10 +34,7 @@ export function LoginComponent() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // setLoading(true);
-    // your client side validation here
-    // after success validation
-    const userData = {
+    const userData: LoginPayload = {
       username,
       password,
     };
@@ -81,7 +83,9 @@ export function LoginComponent() {
           value="Submit"
         />
         <br />
-        <A href="/#">Forgot Password?</A>
+        <A href="/#" onClick={onForgotPw}>
+          Forgot Password?
+        </A>
       </LoginForm>
     </Wrapper>
   );

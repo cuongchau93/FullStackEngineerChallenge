@@ -4,8 +4,13 @@ import { NavBar } from 'app/components/NavBar';
 import { Features } from './Features';
 import { PageWrapper } from 'app/components/PageWrapper';
 import { LoginComponent } from './components/LoginComponent';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedin } from './slice/selectors';
+import { Title } from './components/Title';
 
 export function HomePage() {
+  const isLoggedin = useSelector(selectIsLoggedin);
+
   return (
     <>
       <Helmet>
@@ -17,7 +22,13 @@ export function HomePage() {
       </Helmet>
       <NavBar />
       <PageWrapper>
-        <LoginComponent />
+        {!isLoggedin ? (
+          <LoginComponent />
+        ) : (
+          <>
+            <Title>Feedback Management</Title>
+          </>
+        )}
       </PageWrapper>
     </>
   );

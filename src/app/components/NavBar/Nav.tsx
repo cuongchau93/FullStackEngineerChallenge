@@ -1,28 +1,30 @@
+import { useHomepageSlice } from 'app/pages/HomePage/slice';
+import { selectUserInfo } from 'app/pages/HomePage/slice/selectors';
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
-import { ReactComponent as DocumentationIcon } from './assets/documentation-icon.svg';
-import { ReactComponent as GithubIcon } from './assets/github-icon.svg';
 
 export function Nav() {
+  const userInfo = useSelector(selectUserInfo);
+  const dispatch = useDispatch();
+  const { actions } = useHomepageSlice();
+
+  const onLogout = () => {
+    dispatch(actions.logoutUser());
+  };
+
   return (
     <Wrapper>
-      <Item
-        href="https://cansahin.gitbook.io/react-boilerplate-cra-template/"
-        target="_blank"
-        title="Documentation Page"
-        rel="noopener noreferrer"
-      >
-        <DocumentationIcon />
-        Documentation
+      <Item href="/#" target="#" title="#" rel="noopener noreferrer">
+        Welcome {userInfo?.username}
       </Item>
       <Item
-        href="https://github.com/react-boilerplate/react-boilerplate-cra-template"
-        target="_blank"
-        title="Github Page"
+        href="/#"
+        onClick={onLogout}
         rel="noopener noreferrer"
+        title="Login Page"
       >
-        <GithubIcon />
-        Github
+        Logout
       </Item>
     </Wrapper>
   );

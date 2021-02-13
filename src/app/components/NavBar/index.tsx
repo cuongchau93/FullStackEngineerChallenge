@@ -4,13 +4,16 @@ import { Logo } from './Logo';
 import { StyleConstants } from 'styles/StyleConstants';
 import { Nav } from './Nav';
 import { PageWrapper } from '../PageWrapper';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedin } from 'app/pages/HomePage/slice/selectors';
 
 export function NavBar() {
+  const isLoggedin = useSelector(selectIsLoggedin);
   return (
     <Wrapper>
       <PageWrapper>
         <Logo />
-        <Nav />
+        {isLoggedin && <Nav />}
       </PageWrapper>
     </Wrapper>
   );
