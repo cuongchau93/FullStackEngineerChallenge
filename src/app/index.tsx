@@ -9,34 +9,18 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
 import { GlobalStyle } from '../styles/global-styles';
 
 import { HomePage } from './pages/HomePage/Loadable';
 import { NotFoundPage } from './pages/NotFoundPage/Loadable';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
-import { useHomepageSlice } from './pages/HomePage/slice';
-import { useDispatch } from 'react-redux';
-import { MyJWT } from './pages/HomePage/slice/types';
+import { UsersManagementPage } from './pages/UsersManagementPage';
+import { useCheckAuthentication } from 'utils/useCheckAuthentication';
 
 export function App() {
   const { i18n } = useTranslation();
-  const { actions } = useHomepageSlice();
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const authToken = localStorage.token;
-    if (authToken) {
-      const decodedToken = jwtDecode<MyJWT>(authToken);
-      if (decodedToken.exp * 1000 < Date.now()) {
-        dispatch(actions.logoutUser());
-      } else {
-        dispatch(actions.initStateIfNeeded());
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useCheckAuthentication();
 
   return (
     <BrowserRouter>
@@ -50,6 +34,11 @@ export function App() {
 
       <Switch>
         <Route exact path={process.env.PUBLIC_URL + '/'} component={HomePage} />
+        <Route
+          exact
+          path={process.env.PUBLIC_URL + '/users'}
+          component={UsersManagementPage}
+        />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />

@@ -1,4 +1,5 @@
 import { HomeState } from 'app/pages/HomePage/slice/types';
+import { UserManagementState } from 'app/pages/UsersManagementPage/slice/types';
 import { ThemeState } from 'styles/theme/slice/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
@@ -12,4 +13,5 @@ export interface RootState {
   theme?: ThemeState;
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
   home: HomeState;
+  userManagement: UserManagementState;
 }

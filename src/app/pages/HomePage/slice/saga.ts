@@ -1,17 +1,18 @@
+import { PayloadAction } from '@reduxjs/toolkit';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'utils/request';
 import { homepageActions as actions } from '.';
 import { selectUserInfo } from './selectors';
-const SERVER_URL = 'http://localhost:3001';
+import { LoginPayload } from './types';
+export const SERVER_URL = 'http://localhost:3001';
 
 export function* userLogout() {
   localStorage.removeItem('token');
   yield put(actions.updateUser(null));
-  // window.location.href = '/'; // redirect to login page
-  // console.log('redirect');
+  window.location.href = '/'; // redirect to login page
 }
 
-export function* getUserData(token: string) {
+export function* getSelfData(token: string) {
   const requestURL = `${SERVER_URL}/users/self`;
   const response = yield call(request, requestURL, {
     headers: {
@@ -21,7 +22,7 @@ export function* getUserData(token: string) {
   return response;
 }
 
-export function* userLogin(action) {
+export function* userLogin(action: PayloadAction<LoginPayload>) {
   const requestURL = `${SERVER_URL}/auth/login`;
   yield put(actions.updateLoading({ loading: true }));
 
@@ -40,14 +41,12 @@ export function* userLogin(action) {
     });
 
     localStorage.setItem('token', response.token); // setting token to local storage
-    const userInfo = yield call(getUserData, response.token);
+    const userInfo = yield call(getSelfData, response.token);
 
     yield put(actions.updateUser(userInfo));
     yield put(actions.updateLoading({ loading: false }));
   } catch (err) {
-    console.error(err);
     yield put(actions.updateLoading({ loading: false, error: err.message }));
-    // yield put(repoLoadingError(err));
   }
 }
 
@@ -60,7 +59,7 @@ export function* initStateIfNeeded() {
   yield put(actions.updateLoading({ loading: true }));
 
   try {
-    const userInfo = yield call(getUserData, localStorage.token);
+    const userInfo = yield call(getSelfData, localStorage.token);
 
     yield put(actions.updateUser(userInfo));
     yield put(actions.updateLoading({ loading: false }));
@@ -74,10 +73,6 @@ export function* initStateIfNeeded() {
  * Root saga manages watcher lifecycle
  */
 export function* homeSagas() {
-  // Watches for loadRepos actions and calls getRepos when one comes in.
-  // By using `takeLatest` only the result of the latest API call is applied.
-  // It returns task descriptor (just like fork) so we can continue execution
-  // It will be cancelled automatically on component unmount
   yield takeLatest(actions.loginUser.type, userLogin);
   yield takeLatest(actions.initStateIfNeeded.type, initStateIfNeeded);
   yield takeLatest(actions.logoutUser.type, userLogout);

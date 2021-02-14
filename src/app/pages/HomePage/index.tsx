@@ -5,11 +5,14 @@ import { Features } from './Features';
 import { PageWrapper } from 'app/components/PageWrapper';
 import { LoginComponent } from './components/LoginComponent';
 import { useSelector } from 'react-redux';
-import { selectIsLoggedin } from './slice/selectors';
+import { selectIsAdmin, selectIsLoggedin } from './slice/selectors';
 import { Title } from './components/Title';
+import { SubTitle } from './components/SubTitle';
+import { A } from 'app/components/A';
 
 export function HomePage() {
   const isLoggedin = useSelector(selectIsLoggedin);
+  const isAdmin = useSelector(selectIsAdmin);
 
   return (
     <>
@@ -27,6 +30,24 @@ export function HomePage() {
         ) : (
           <>
             <Title>Feedback Management</Title>
+            <SubTitle>Allowed Actions:</SubTitle>
+            {isAdmin ? (
+              <>
+                <ul>
+                  <li>
+                    <A href="/users">Users Management</A>
+                  </li>
+                </ul>
+              </>
+            ) : (
+              <>
+                <ul>
+                  <li>
+                    <A href="/assigned-feedbacks">View assigned feedback</A>
+                  </li>
+                </ul>
+              </>
+            )}
           </>
         )}
       </PageWrapper>
