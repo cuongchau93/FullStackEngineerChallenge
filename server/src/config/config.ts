@@ -1,3 +1,4 @@
-export default {
+const config = {
   jwtSecret: '@QEGTUI',
 };
+export default config;
