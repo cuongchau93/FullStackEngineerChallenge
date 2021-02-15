@@ -20,11 +20,11 @@ export class Feedback {
   @Length(4, 400)
   description: string;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
-  createdBy: User;
+  givenBy: User;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   belongsTo: User;
 

@@ -29,7 +29,7 @@ export class InitialSeed1547919837483 implements MigrationInterface {
 
     let feedback = new Feedback();
     feedback.description = "very good";
-    feedback.createdBy = user2;
+    feedback.givenBy = user2;
     feedback.belongsTo = user;
 
     const feedbackRepository = getRepository(Feedback);

@@ -61,8 +61,8 @@ export function* addUser(action: PayloadAction<NewUserInfo>) {
       },
       body: JSON.stringify({
         username: action.payload.username,
-        // no encryption, https is created for that
         password: action.payload.password,
+        role: action.payload.role,
       }),
     });
     yield call(getUsers);

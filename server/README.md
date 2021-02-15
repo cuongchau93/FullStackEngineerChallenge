@@ -24,6 +24,10 @@ Steps to run this project:
  DELETE
 5/ /self
  GET 
+
+# Assumption
+- if user got deleted, his associated feedback will be deleted
+- 
 # encountered issue 
 1/ Client does not support authentication protocol requested by server; consider upgrading MySQL client
 ==> run: ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'

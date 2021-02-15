@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components/macro';
 import { A } from 'app/components/A';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useUserManagementPageSlice } from '../slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Title } from './Title';
@@ -22,17 +22,28 @@ export function UserTable() {
   const selectedUser = useSelector(selectSelectedUser);
   const data = useMemo(() => users, [users]);
 
-  const onEditClick = useMemo(() => id => dispatch(actions.selectUser(id)), [
-    actions,
-    dispatch,
-  ]);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
 
-  const onRemoveClick = useMemo(() => id => dispatch(actions.removeUser(id)), [
-    actions,
-    dispatch,
-  ]);
+  const onEditClick = useMemo(
+    () => id => {
+      dispatch(actions.selectUser(id));
+      setIsCreatingUser(false);
+    },
+    [actions, dispatch],
+  );
 
-  const onRowAssignClick = e => {};
+  const onAddNewClick = () => {
+    dispatch(actions.selectUser(-1));
+    setIsCreatingUser(true);
+  };
+
+  const onRemoveClick = useMemo(
+    () => id => {
+      dispatch(actions.removeUser(id));
+      setIsCreatingUser(false);
+    },
+    [actions, dispatch],
+  );
 
   const columns = useMemo(
     () => [
@@ -78,7 +89,9 @@ export function UserTable() {
           {
             Header: 'Remove',
             Cell: ({ cell }) => (
-              <button onClick={() => onRemoveClick(cell.row.id)}>Remove</button>
+              <button onClick={() => onRemoveClick(cell.row.values.id)}>
+                Remove
+              </button>
             ),
           },
         ],
@@ -103,22 +116,21 @@ export function UserTable() {
 
   const loading = useSelector(selectIsLoading);
 
-  const onCreateNewUserClick = e => {
-    e.preventDefault();
-
-    // const userData: LoginPayload = {
-    //   username,
-    //   password,
-    // };
-
-    // dispatch(actions.createNewUser(userData));
+  const onCloseButtonClick = () => {
+    dispatch(actions.selectUser(-1));
+    setIsCreatingUser(false);
   };
-
   return (
     <Wrapper>
       {loading && <LoadingIndicator />}
 
-      {selectedUser && <UserDataForm isEditing />}
+      {isCreatingUser ? (
+        <UserDataForm onCloseButtonClick={onCloseButtonClick} />
+      ) : (
+        selectedUser && (
+          <UserDataForm isEditing onCloseButtonClick={onCloseButtonClick} />
+        )
+      )}
 
       <Title>Users Table</Title>
       <StyledDiv>
@@ -149,6 +161,7 @@ export function UserTable() {
             })}
           </tbody>
         </table>
+        <Button onClick={onAddNewClick}>Add New User</Button>
       </StyledDiv>
     </Wrapper>
   );
@@ -160,6 +173,18 @@ const Wrapper = styled.main`
   align-items: center;
   justify-content: center;
   min-height: 320px;
+`;
+
+const Button = styled.button`
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  float: right;
 `;
 
 const StyledDiv = styled.div`

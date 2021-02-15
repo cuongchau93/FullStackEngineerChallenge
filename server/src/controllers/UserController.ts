@@ -40,7 +40,7 @@ class UserController {
     const feedbackRepository = getRepository(Feedback);
     const feedbacks = await feedbackRepository.find({
       where: { belongsTo: res.locals.jwtPayload.userId },
-      select: ['description', 'createdBy'], //We dont want to send the passwords on response
+      select: ['description', 'givenBy'], //We dont want to send the passwords on response
     });
 
     //Send the users object
@@ -68,7 +68,7 @@ class UserController {
       });
       res.json(user);
     } catch (error) {
-      res.status(404).send('User not found');
+      res.status(404).send({ message: 'User not found' });
     }
   };
 
@@ -95,12 +95,12 @@ class UserController {
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send('username already in use');
+      res.status(409).send({ message: 'username already in use' });
       return;
     }
 
     //If all ok, send 201 response
-    res.status(201).send('User created');
+    res.status(201).send({ message: 'User created' });
   };
 
   static editUser = async (req: Request, res: Response) => {
@@ -117,7 +117,7 @@ class UserController {
       user = await userRepository.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send('User not found');
+      res.status(404).send({ message: 'User not found' });
       return;
     }
 
@@ -134,7 +134,7 @@ class UserController {
     try {
       await userRepository.save(user);
     } catch (e) {
-      res.status(409).send('username already in use');
+      res.status(409).send({ message: 'username already in use' });
       return;
     }
     //After all send a 204 (no content, but accepted) response
@@ -146,17 +146,16 @@ class UserController {
     const id = req.params.id;
 
     const userRepository = getRepository(User);
-    let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
+      await userRepository.findOneOrFail(id);
     } catch (error) {
-      res.status(404).send('User not found');
+      res.status(404).send({ message: 'User not found' });
       return;
     }
     userRepository.delete(id);
 
     //After all send a 204 (no content, but accepted) response
-    res.status(204).send('Done');
+    res.status(204).send({ message: 'Done' });
   };
 }
 

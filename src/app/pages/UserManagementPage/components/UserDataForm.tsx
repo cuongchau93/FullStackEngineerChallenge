@@ -29,6 +29,9 @@ export function UserDataForm(props) {
     if (selectedUser) {
       setUserName(selectedUser?.username);
       setRole({ value: selectedUser?.role });
+    } else {
+      setUserName('');
+      setRole({ value: 'EMPLOYEE' });
     }
   }, [selectedUser]);
 
@@ -79,6 +82,7 @@ export function UserDataForm(props) {
       <LoginForm
         onSubmit={props.isEditing ? handleEditSubmit : handleNewSubmit}
       >
+        <CloseButton onClick={props.onCloseButtonClick}>X</CloseButton>
         {error && (
           <P
             style={{
@@ -137,6 +141,13 @@ const LoginForm = styled.form`
   h1 {
     text-align: center;
   }
+`;
+
+const CloseButton = styled.button`
+  position: relative;
+  float: right;
+  top: -50px;
+  right: -50px;
 `;
 
 const Input = styled.input`

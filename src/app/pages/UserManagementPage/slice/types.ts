@@ -8,7 +8,7 @@ export interface MyJWT {
 interface Feedback {
   id: number;
   description: string;
-  createdBy: number;
+  givenBy: number;
 }
 
 export interface NewUserInfo {
