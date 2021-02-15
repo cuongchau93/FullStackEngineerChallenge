@@ -7,24 +7,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Title } from './Title';
 import {
   selectAllUsers,
-  selectError,
   selectIsLoading,
+  selectSelectedUser,
 } from '../slice/selectors';
 import { LoadingIndicator } from 'app/components/LoadingIndicator';
 import { useSortBy, useTable } from 'react-table';
+import { UserDataForm } from './UserDataForm';
 
 export function UserTable() {
   const { actions } = useUserManagementPageSlice();
   const dispatch = useDispatch();
 
   const users = useSelector(selectAllUsers);
+  const selectedUser = useSelector(selectSelectedUser);
   const data = useMemo(() => users, [users]);
 
-  const onRowEditClick = e => {
-    console.log(e);
-  };
+  const onEditClick = useMemo(() => id => dispatch(actions.selectUser(id)), [
+    actions,
+    dispatch,
+  ]);
 
-  const onRowDeleteClick = e => {};
+  const onRemoveClick = useMemo(() => id => dispatch(actions.removeUser(id)), [
+    actions,
+    dispatch,
+  ]);
 
   const onRowAssignClick = e => {};
 
@@ -51,8 +57,12 @@ export function UserTable() {
         Header: 'Feedback Info',
         columns: [
           {
-            Header: 'Total feedback',
-            accessor: 'total',
+            Header: 'Total Assigned Feedback',
+            accessor: 'totalAssignedFeedbacks',
+          },
+          {
+            Header: 'Done Feedback',
+            accessor: 'doneFeedbacks',
           },
         ],
       },
@@ -62,25 +72,19 @@ export function UserTable() {
           {
             Header: 'Edit',
             Cell: ({ cell }) => (
-              <button onClick={() => onRowEditClick(cell)}>Edit</button>
+              <button onClick={() => onEditClick(cell.row.id)}>Edit</button>
             ),
           },
           {
-            Header: 'Delete',
+            Header: 'Remove',
             Cell: ({ cell }) => (
-              <button onClick={() => onRowDeleteClick(cell)}>Delete</button>
-            ),
-          },
-          {
-            Header: 'Assign',
-            Cell: ({ cell }) => (
-              <button onClick={() => onRowAssignClick(cell)}>Assign</button>
+              <button onClick={() => onRemoveClick(cell.row.id)}>Remove</button>
             ),
           },
         ],
       },
     ],
-    [],
+    [onEditClick, onRemoveClick],
   );
 
   const {
@@ -98,7 +102,6 @@ export function UserTable() {
   }, [actions, dispatch, users.length]);
 
   const loading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
 
   const onCreateNewUserClick = e => {
     e.preventDefault();
@@ -113,8 +116,11 @@ export function UserTable() {
 
   return (
     <Wrapper>
-      <Title>Users Table</Title>
       {loading && <LoadingIndicator />}
+
+      {selectedUser && <UserDataForm isEditing />}
+
+      <Title>Users Table</Title>
       <StyledDiv>
         <table {...getTableProps()}>
           <thead>
@@ -144,13 +150,6 @@ export function UserTable() {
           </tbody>
         </table>
       </StyledDiv>
-      {/* {users.forEach(u => (
-        <></>
-      ))} */}
-      <br />
-      <A href="/#" onClick={onCreateNewUserClick}>
-        Add New User
-      </A>
     </Wrapper>
   );
 }

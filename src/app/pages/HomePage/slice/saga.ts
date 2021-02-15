@@ -4,12 +4,14 @@ import { request } from 'utils/request';
 import { homepageActions as actions } from '.';
 import { selectUserInfo } from './selectors';
 import { LoginPayload } from './types';
+import { userManagementPageActions } from 'app/pages/UserManagementPage/slice';
+
 export const SERVER_URL = 'http://localhost:3001';
 
 export function* userLogout() {
   localStorage.removeItem('token');
   yield put(actions.updateUser(null));
-  window.location.href = '/'; // redirect to login page
+  yield put(userManagementPageActions.updateUsers([]));
 }
 
 export function* getSelfData(token: string) {
@@ -56,6 +58,7 @@ export function* initStateIfNeeded() {
   if (userInfo !== null) {
     return;
   }
+
   yield put(actions.updateLoading({ loading: true }));
 
   try {

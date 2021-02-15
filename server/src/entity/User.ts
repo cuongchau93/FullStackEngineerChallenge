@@ -27,6 +27,12 @@ export class User {
   @IsNotEmpty()
   role: string;
 
+  @Column({ default: 0 })
+  totalAssignedFeedbacks: number;
+
+  @Column({ default: 0 })
+  doneFeedbacks: number;
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

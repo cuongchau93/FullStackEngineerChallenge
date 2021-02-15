@@ -11,6 +11,11 @@ export const selectAllUsers = createSelector(
   userManagementState => userManagementState.users,
 );
 
+export const selectSelectedUser = createSelector(
+  [selectDomain],
+  userManagementState => userManagementState.selectedUser,
+);
+
 export const selectIsLoading = createSelector(
   [selectDomain],
   userManagementState => userManagementState.loading,

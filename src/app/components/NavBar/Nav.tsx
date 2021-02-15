@@ -2,28 +2,30 @@ import { useHomepageSlice } from 'app/pages/HomePage/slice';
 import { selectUserInfo } from 'app/pages/HomePage/slice/selectors';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 export function Nav() {
   const userInfo = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const { actions } = useHomepageSlice();
+  const history = useHistory();
 
   const onLogout = () => {
     dispatch(actions.logoutUser());
+    history.push('/'); //assume the logout done
+  };
+
+  const onWelcomeClicked = () => {
+    history.push('/');
   };
 
   return (
     <Wrapper>
-      <Item href="/#" target="#" title="#" rel="noopener noreferrer">
+      <Item onClick={onWelcomeClicked} title="#" rel="noopener noreferrer">
         Welcome {userInfo?.username}
       </Item>
-      <Item
-        href="/#"
-        onClick={onLogout}
-        rel="noopener noreferrer"
-        title="Login Page"
-      >
+      <Item onClick={onLogout} rel="noopener noreferrer" title="Login Page">
         Logout
       </Item>
     </Wrapper>

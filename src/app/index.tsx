@@ -14,7 +14,7 @@ import { GlobalStyle } from '../styles/global-styles';
 import { HomePage } from './pages/HomePage/Loadable';
 import { NotFoundPage } from './pages/NotFoundPage/Loadable';
 import { useTranslation } from 'react-i18next';
-import { UsersManagementPage } from './pages/UsersManagementPage';
+import { UserManagementPage } from './pages/UserManagementPage/Loadable';
 import { useCheckAuthentication } from 'utils/useCheckAuthentication';
 
 export function App() {
@@ -37,8 +37,13 @@ export function App() {
         <Route
           exact
           path={process.env.PUBLIC_URL + '/users'}
-          component={UsersManagementPage}
+          component={UserManagementPage}
         />
+        {/* <Route
+          exact
+          path={process.env.PUBLIC_URL + '/feedbacks'}
+          component={FeedbacksPage}
+        /> */}
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />

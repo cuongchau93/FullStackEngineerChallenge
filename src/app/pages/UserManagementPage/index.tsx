@@ -4,9 +4,8 @@ import { NavBar } from 'app/components/NavBar';
 import { PageWrapper } from 'app/components/PageWrapper';
 import { Title } from './components/Title';
 import { UserTable } from './components/UserTable';
-import { useCheckAuthentication } from 'utils/useCheckAuthentication';
 
-export function UsersManagementPage() {
+export function UserManagementPage() {
   return (
     <>
       <Helmet>

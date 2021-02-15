@@ -1,5 +1,5 @@
 import { HomeState } from 'app/pages/HomePage/slice/types';
-import { UserManagementState } from 'app/pages/UsersManagementPage/slice/types';
+import { UserManagementState } from 'app/pages/UserManagementPage/slice/types';
 import { ThemeState } from 'styles/theme/slice/types';
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 

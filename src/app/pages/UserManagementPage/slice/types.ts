@@ -11,6 +11,15 @@ interface Feedback {
   createdBy: number;
 }
 
+export interface NewUserInfo {
+  username: string;
+  password: string;
+  role: string;
+}
+export interface EditUserInfo {
+  username: string;
+  role: string;
+}
 export interface UserInfo {
   id: number;
   username: string;
@@ -21,6 +30,7 @@ export interface UserInfo {
 
 export interface UserManagementState {
   users: UserInfo[];
+  selectedUser: UserInfo | null;
   loading: boolean;
   error?: string;
 }
