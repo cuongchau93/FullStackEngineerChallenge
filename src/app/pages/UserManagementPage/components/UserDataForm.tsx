@@ -45,7 +45,7 @@ export function UserDataForm(props) {
     setPassword(e.target.value);
   };
   const onRoleChanged = e => {
-    setRole(e.target.value);
+    setRole({ value: e.target.value });
   };
 
   const handleEditSubmit = e => {

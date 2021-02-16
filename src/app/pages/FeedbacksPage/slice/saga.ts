@@ -1,5 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'app/pages/HomePage/slice/saga';
+import { selectIsAdmin } from 'app/pages/HomePage/slice/selectors';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'utils/request';
 import { feedbacksPageActions as actions } from '.';
@@ -12,6 +13,7 @@ export function* getFeedbacks() {
   const requestURL = `${SERVER_URL}/feedbacks`;
   const token = localStorage.token;
   yield put(actions.updateLoading({ loading: true }));
+  yield put(actions.updateIsFetched(false));
 
   try {
     const response = yield call(request, requestURL, {
@@ -20,6 +22,30 @@ export function* getFeedbacks() {
       },
     });
     yield put(actions.updateFeedbacks(response));
+    yield put(actions.updateIsFetched(true));
+    yield put(actions.updateLoading({ loading: false }));
+    return response;
+  } catch (e) {
+    yield put(actions.updateLoading({ loading: false, error: e.message }));
+  }
+}
+
+export function* getSelfFeedbacks() {
+  //todo add limits
+  // and total counts
+  const requestURL = `${SERVER_URL}/feedbacks/self`;
+  const token = localStorage.token;
+  yield put(actions.updateLoading({ loading: true }));
+  yield put(actions.updateIsFetched(false));
+
+  try {
+    const response = yield call(request, requestURL, {
+      headers: {
+        auth: token,
+      },
+    });
+    yield put(actions.updateFeedbacks(response));
+    yield put(actions.updateIsFetched(true));
     yield put(actions.updateLoading({ loading: false }));
     return response;
   } catch (e) {
@@ -110,7 +136,12 @@ export function* editFeedback(action: PayloadAction<EditFeedbackInfo>) {
         description: action.payload.description,
       }),
     });
-    yield call(getFeedbacks);
+    const isAdmin = yield select(selectIsAdmin);
+    if (isAdmin) {
+      yield call(getFeedbacks);
+    } else {
+      yield call(getSelfFeedbacks);
+    }
   } catch (e) {
     yield put(actions.updateLoading({ loading: false, error: e.message }));
   }
@@ -123,6 +154,7 @@ export function* removeFeedbackFromState(id: number) {
 
 export function* feedbacksPageSagas() {
   yield takeLatest(actions.getAllFeedbacks.type, getFeedbacks);
+  yield takeLatest(actions.getSelfFeedbacks.type, getSelfFeedbacks);
   yield takeLatest(actions.removeFeedback.type, removeFeedback);
   yield takeLatest(actions.addNewFeedback.type, addFeedback);
   yield takeLatest(actions.editFeedback.type, editFeedback);

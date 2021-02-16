@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { validate } from 'class-validator';
 import { Feedback } from '../entity/Feedback';
+import { User } from '../entity/User';
 
 class FeedbackController {
   static listAll = async (req: Request, res: Response) => {
@@ -23,18 +24,18 @@ class FeedbackController {
     const self = res.locals.jwtPayload.userId;
 
     try {
-      const feedbacks = await feedbackRepository.find({
-        where: [
-          // getting all given or own feedbacks
-          {
-            belongsTo: self,
-          },
-          {
-            givenBy: self,
-          },
-        ],
-        select: ['id', 'description', 'givenBy', 'belongsTo'],
-      });
+      const feedbacks = await feedbackRepository
+        .createQueryBuilder('feedback')
+        .where('feedback.belongsToId = :id or feedback.givenById = :id', {
+          id: self,
+        })
+        .leftJoinAndSelect('feedback.belongsTo', 'forUser')
+        .leftJoinAndSelect('feedback.givenBy', 'asignee')
+        .select(
+          'feedback.id, description, forUser.username as belongsTo, asignee.username as givenBy',
+        )
+        .getRawMany();
+
       res.send(feedbacks);
     } catch (e) {
       res.status(500).send({ message: 'Error while getting feedback', e });
@@ -68,6 +69,52 @@ class FeedbackController {
 
     //If all ok, send 201 response
     res.status(201).send({ message: 'Feedback created' });
+  };
+
+  static editFeedback = async (req: Request, res: Response) => {
+    //Get parameters from the body
+    const id = req.params.id;
+    let { description, belongsToId, givenById } = req.body;
+    const userId = res.locals.jwtPayload.userId;
+
+    //Get user role from the database
+    const userRepository = getRepository(User);
+    const feedbackRepository = getRepository(Feedback);
+
+    let user: User;
+    try {
+      let feedback = await feedbackRepository.findOneOrFail(id);
+      user = await userRepository.findOneOrFail(userId);
+      if (belongsToId || givenById) {
+        if (user.role !== 'ADMIN') {
+          res
+            .status(401)
+            .send({ message: 'Only admin can change these properties' });
+        } else if (feedback.description.length > 0) {
+          res.status(409).send({
+            message:
+              'These properties cannot be changed because description is not empty',
+          });
+        } else {
+          feedback.givenById = givenById;
+          feedback.belongsToId = belongsToId;
+        }
+      }
+
+      //Validate the new values on model
+      feedback.description = description;
+      const errors = await validate(feedback);
+      if (errors.length > 0) {
+        res.status(400).send(errors);
+        return;
+      }
+
+      await feedbackRepository.save(feedback);
+    } catch (e) {
+      res.status(409).send({ message: 'Error while updating feedback', e });
+    }
+
+    res.status(204).send();
   };
 
   static deleteFeedback = async (req: Request, res: Response) => {

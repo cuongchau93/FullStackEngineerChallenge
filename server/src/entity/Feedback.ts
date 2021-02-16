@@ -20,12 +20,18 @@ export class Feedback {
   description: string;
 
   // one person can give multiple feedback
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(type => User, user => user.assignedFeedbacks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn()
   givenBy: User;
 
   // one person can receive multiple feedback
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(type => User, user => user.feedbacks, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
   @JoinColumn()
   belongsTo: User;
 

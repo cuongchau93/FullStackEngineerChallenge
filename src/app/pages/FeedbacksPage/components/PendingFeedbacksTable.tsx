@@ -1,47 +1,31 @@
 import * as React from 'react';
 import styled from 'styled-components/macro';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFeedbacksPageSlice } from '../slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Title } from './Title';
 import {
-  selectAllFeedbacks,
   selectIsFetched,
   selectIsLoading,
+  selectPendingFeedbacks,
   selectSelectedFeedback,
 } from '../slice/selectors';
 import { LoadingIndicator } from 'app/components/LoadingIndicator';
 import { useSortBy, useTable } from 'react-table';
-import { FeedbackDetailForm } from './FeedbackDetailForm';
+import { FeedbackDetailEmployeeForm } from './FeedbackDetailEmployeeForm';
 
-export function FeedbacksTable() {
+export function PendingFeedbacksTable() {
   const { actions } = useFeedbacksPageSlice();
   const dispatch = useDispatch();
 
-  const feedbacks = useSelector(selectAllFeedbacks);
+  const feedbacks = useSelector(selectPendingFeedbacks);
   const isFeedbackFetched = useSelector(selectIsFetched);
   const selectedFeedback = useSelector(selectSelectedFeedback);
   const data = useMemo(() => feedbacks, [feedbacks]);
 
-  const [isCreatingFeedback, setIsCreatingFeedback] = useState(false);
-
   const onEditClick = useMemo(
     () => id => {
       dispatch(actions.selectFeedback(id));
-      setIsCreatingFeedback(false);
-    },
-    [actions, dispatch],
-  );
-
-  const onAddNewClick = () => {
-    dispatch(actions.selectFeedback(null));
-    setIsCreatingFeedback(true);
-  };
-
-  const onRemoveClick = useMemo(
-    () => id => {
-      dispatch(actions.removeFeedback(id));
-      setIsCreatingFeedback(false);
     },
     [actions, dispatch],
   );
@@ -60,12 +44,12 @@ export function FeedbacksTable() {
             accessor: 'description',
           },
           {
-            Header: 'Given By',
-            accessor: 'givenById',
+            Header: 'Belongs to',
+            accessor: 'belongsTo',
           },
           {
-            Header: 'Belongs to',
-            accessor: 'belongsToId',
+            Header: 'Given By',
+            accessor: 'givenBy',
           },
         ],
       },
@@ -75,26 +59,13 @@ export function FeedbacksTable() {
           {
             Header: 'Edit',
             Cell: ({ cell }) => (
-              <button
-                disabled={cell.row.values.description.length > 0}
-                onClick={() => onEditClick(cell.row.values)}
-              >
-                Edit
-              </button>
-            ),
-          },
-          {
-            Header: 'Remove',
-            Cell: ({ cell }) => (
-              <button onClick={() => onRemoveClick(cell.row.values.id)}>
-                Remove
-              </button>
+              <button onClick={() => onEditClick(cell.row.values)}>Edit</button>
             ),
           },
         ],
       },
     ],
-    [onEditClick, onRemoveClick],
+    [onEditClick],
   );
 
   const {
@@ -107,7 +78,7 @@ export function FeedbacksTable() {
 
   useEffect(() => {
     if (!isFeedbackFetched) {
-      dispatch(actions.getAllFeedbacks());
+      dispatch(actions.getSelfFeedbacks());
     }
   }, [actions, dispatch, isFeedbackFetched]);
 
@@ -115,24 +86,17 @@ export function FeedbacksTable() {
 
   const onCloseButtonClick = () => {
     dispatch(actions.selectFeedback(null));
-    setIsCreatingFeedback(false);
   };
+
   return (
     <Wrapper>
       {loading && <LoadingIndicator />}
 
-      {isCreatingFeedback ? (
-        <FeedbackDetailForm onCloseButtonClick={onCloseButtonClick} />
-      ) : (
-        selectedFeedback && (
-          <FeedbackDetailForm
-            isEditing
-            onCloseButtonClick={onCloseButtonClick}
-          />
-        )
+      {selectedFeedback && (
+        <FeedbackDetailEmployeeForm onCloseButtonClick={onCloseButtonClick} />
       )}
 
-      <Title>Feedbacks Table</Title>
+      <Title>Pending Feedbacks Table</Title>
       <StyledDiv>
         <table {...getTableProps()}>
           <thead>
@@ -161,7 +125,6 @@ export function FeedbacksTable() {
             })}
           </tbody>
         </table>
-        <Button onClick={onAddNewClick}>Add New Feedback</Button>
       </StyledDiv>
     </Wrapper>
   );
@@ -173,18 +136,6 @@ const Wrapper = styled.main`
   align-items: center;
   justify-content: center;
   min-height: 320px;
-`;
-
-const Button = styled.button`
-  background-color: #4caf50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  margin: 4px 2px;
-  cursor: pointer;
-  float: right;
 `;
 
 const StyledDiv = styled.div`

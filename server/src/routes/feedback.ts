@@ -9,14 +9,13 @@ const router = Router();
 router.get('/', [checkJwt, checkRole(['ADMIN'])], FeedbackController.listAll);
 
 //Get all self feedbacks
-router.post(
-  '/self',
-  [checkJwt, checkRole(['ADMIN'])],
-  FeedbackController.getAllSelf,
-);
+router.get('/self', [checkJwt], FeedbackController.getAllSelf);
 
 //Create a new feedback
 router.post('/', [checkJwt], FeedbackController.newFeedback);
+
+//Edit  feedback
+router.patch('/:id([0-9]+)', [checkJwt], FeedbackController.editFeedback);
 
 //Delete one feedback
 router.delete('/:id([0-9]+)', [checkJwt], FeedbackController.deleteFeedback);

@@ -6,7 +6,6 @@ import { HomeState, LoginPayload, UserInfo } from './types';
 
 export const initialState: HomeState = {
   userInfo: null,
-  users: [],
   loading: false,
 };
 

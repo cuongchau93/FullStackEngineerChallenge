@@ -4,8 +4,13 @@ import { NavBar } from 'app/components/NavBar';
 import { PageWrapper } from 'app/components/PageWrapper';
 import { Title } from './components/Title';
 import { FeedbacksTable } from './components/FeedbacksTable';
+import { useSelector } from 'react-redux';
+import { selectIsAdmin } from '../HomePage/slice/selectors';
+import { PendingFeedbacksTable } from './components/PendingFeedbacksTable';
 
 export function FeedbacksPage() {
+  const isAdmin = useSelector(selectIsAdmin);
+
   return (
     <>
       <Helmet>
@@ -18,7 +23,7 @@ export function FeedbacksPage() {
       <NavBar />
       <PageWrapper>
         <Title>Feedback Management</Title>
-        <FeedbacksTable />
+        {isAdmin ? <FeedbacksTable /> : <PendingFeedbacksTable />}
       </PageWrapper>
     </>
   );

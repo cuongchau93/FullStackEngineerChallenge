@@ -40,9 +40,11 @@ export function HomePage() {
             <Title>Feedback Management</Title>
             <SubTitle>Allowed Actions:</SubTitle>
             <ul>
-              <li>
-                <A onClick={handleUserManagementClick}>Users Management</A>
-              </li>
+              {isAdmin && (
+                <li>
+                  <A onClick={handleUserManagementClick}>Users Management</A>
+                </li>
+              )}
               <li>
                 <A onClick={handleFeedbackManagementClick}>
                   Feedbacks Management

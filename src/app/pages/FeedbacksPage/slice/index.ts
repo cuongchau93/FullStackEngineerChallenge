@@ -10,6 +10,7 @@ import {
 } from './types';
 
 export const initialState: FeedbacksPageState = {
+  isFetched: false,
   feedbacks: [],
   selectedFeedback: null,
   loading: false,
@@ -25,10 +26,14 @@ const slice = createSlice({
       };
     },
     getAllFeedbacks() {},
-    selectFeedback(state, action: PayloadAction<number>) {
+    getSelfFeedbacks() {},
+    selectFeedback(state, action: PayloadAction<FeedbackInfo | null>) {
       return {
         ...state,
-        selectedFeedback: state.feedbacks[action.payload],
+        selectedFeedback:
+          action.payload !== null
+            ? state.feedbacks.filter(f => f.id === action.payload?.id)[0]
+            : null,
       };
     },
     removeFeedback(state, action: PayloadAction<number>) {},
@@ -40,6 +45,9 @@ const slice = createSlice({
     ) {
       state.loading = action.payload.loading;
       state.error = action.payload.error;
+    },
+    updateIsFetched(state, action: PayloadAction<Boolean>) {
+      state.isFetched = action.payload;
     },
     updateFeedbacks(state, action: PayloadAction<FeedbackInfo[]>) {
       return {

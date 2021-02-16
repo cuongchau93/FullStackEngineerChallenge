@@ -25,7 +25,6 @@ export interface UserInfo {
 /* --- STATE --- */
 export interface HomeState {
   userInfo: UserInfo | null;
-  users?: UserInfo[];
   loading: boolean;
   error?: string;
 }

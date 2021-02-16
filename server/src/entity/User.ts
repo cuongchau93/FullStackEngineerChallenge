@@ -5,9 +5,11 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Length, IsNotEmpty } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
+import { Feedback } from './Feedback';
 
 @Entity()
 @Unique(['username'])
@@ -26,6 +28,12 @@ export class User {
   @Column()
   @IsNotEmpty()
   role: string;
+
+  @OneToMany(type => Feedback, feedback => feedback.givenBy)
+  assignedFeedbacks: Feedback[];
+
+  @OneToMany(type => Feedback, feedback => feedback.belongsTo)
+  feedbacks: Feedback[];
 
   @Column()
   @CreateDateColumn()
