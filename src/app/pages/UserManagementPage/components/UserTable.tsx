@@ -68,11 +68,11 @@ export function UserTable() {
         columns: [
           {
             Header: 'Total Assigned Feedback',
-            accessor: 'totalAssignedFeedbacks',
+            accessor: 'assignedFeedbacks_count',
           },
           {
-            Header: 'Done Feedback',
-            accessor: 'doneFeedbacks',
+            Header: 'Received Feedback',
+            accessor: 'feedbacks_count',
           },
         ],
       },

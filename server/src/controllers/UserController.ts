@@ -9,18 +9,16 @@ class UserController {
   static listAll = async (req: Request, res: Response) => {
     //Get users from database
     const userRepository = getRepository(User);
-    //todo generate totalAssignedFeedbacks and doneFeedbacks
-    // const feedbackRepository = getRepository(Feedback);
     try {
-      const users = await userRepository.find({
-        select: [
-          'id',
-          'username',
-          // 'totalAssignedFeedbacks',
-          // 'doneFeedbacks',
-          'role',
-        ],
-      });
+      const users = await userRepository
+        .createQueryBuilder('user')
+        .addSelect(['user.id', 'user.username', 'user.role'])
+        .loadRelationCountAndMap(
+          'user.assignedFeedbacks_count',
+          'user.assignedFeedbacks',
+        )
+        .loadRelationCountAndMap('user.feedbacks_count', 'user.feedbacks')
+        .getMany();
       res.send(users);
     } catch (e) {
       res.status(500).send({ message: 'Error while getting feedback', e });

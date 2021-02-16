@@ -1,6 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'app/pages/HomePage/slice/saga';
 import { selectIsAdmin } from 'app/pages/HomePage/slice/selectors';
+import { getUsers } from 'app/pages/UserManagementPage/slice/saga';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'utils/request';
 import { feedbacksPageActions as actions } from '.';
@@ -13,7 +14,6 @@ export function* getFeedbacks() {
   const requestURL = `${SERVER_URL}/feedbacks`;
   const token = localStorage.token;
   yield put(actions.updateLoading({ loading: true }));
-  yield put(actions.updateIsFetched(false));
 
   try {
     const response = yield call(request, requestURL, {
@@ -36,7 +36,6 @@ export function* getSelfFeedbacks() {
   const requestURL = `${SERVER_URL}/feedbacks/self`;
   const token = localStorage.token;
   yield put(actions.updateLoading({ loading: true }));
-  yield put(actions.updateIsFetched(false));
 
   try {
     const response = yield call(request, requestURL, {
@@ -66,6 +65,10 @@ export function* removeFeedback(action: PayloadAction<number>) {
       },
     });
     yield call(removeFeedbackFromState, action.payload);
+    // admin may add new feedback ==> count in redux state may be stale
+    // call /users again
+    yield call(getUsers);
+
     yield put(actions.updateLoading({ loading: false }));
   } catch (e) {
     yield put(actions.updateLoading({ loading: false, error: e.message }));
@@ -92,24 +95,22 @@ export function* addFeedback(action: PayloadAction<NewFeedbackInfo>) {
       }),
     });
     yield call(getFeedbacks);
+    // admin may add new feedback ==> count in redux state may be stale
+    // call /users again
+    yield call(getUsers);
   } catch (e) {
     yield put(actions.updateLoading({ loading: false, error: e.message }));
   }
 }
 
-export function* checkUserConstraints(action: PayloadAction<EditFeedbackInfo>) {
-  // const feedbacks = yield select(selectAllFeedbacks);
-  // for (let i = 0; i < feedbacks.length; ++i) {
-  //   if (action.payload.description === feedbacks[i].description) {
-  //     return {
-  //       message: 'Username is not unique',
-  //     };
-  //   }
-  // }
+export function checkFeedbackConstraints(
+  action: PayloadAction<EditFeedbackInfo>,
+) {
+  // no constraints to check
   return null;
 }
 export function* editFeedback(action: PayloadAction<EditFeedbackInfo>) {
-  const userInfoHasError = yield call(checkUserConstraints, action);
+  const userInfoHasError = yield call(checkFeedbackConstraints, action);
   if (userInfoHasError) {
     yield put(
       actions.updateLoading({
@@ -139,6 +140,9 @@ export function* editFeedback(action: PayloadAction<EditFeedbackInfo>) {
     const isAdmin = yield select(selectIsAdmin);
     if (isAdmin) {
       yield call(getFeedbacks);
+      // admin may add new feedback ==> count in redux state may be stale
+      // call /users again
+      yield call(getUsers);
     } else {
       yield call(getSelfFeedbacks);
     }

@@ -18,6 +18,8 @@ export interface UserInfo {
   id: number;
   username: string;
   role: string;
+  assignedFeedbacks_count: number;
+  feedbacks_count: number;
   token: string;
 }
 
