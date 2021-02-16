@@ -2,6 +2,10 @@
 This project is built on top of [react-boiler-plate with typescript](https://github.com/react-boilerplate/react-boilerplate-cra-template)
 It supports out-of-the-box many things. You can view more in feature section
 
+## Highlevel design 
+Class diagram and flow
+https://drive.google.com/file/d/1aSQH7MlE4mLNREpPZSLB4twbJVgTdA2y/view?usp=sharing
+
 ## Install & Start
 # Server
 ⚠️ Using [Yarn Package Manager](https://yarnpkg.com) is recommended over `npm`.
