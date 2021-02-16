@@ -2,7 +2,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { SERVER_URL } from 'app/pages/HomePage/slice/saga';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { request } from 'utils/request';
-import { FeedbacksPageActions as actions } from '.';
+import { feedbacksPageActions as actions } from '.';
 import { selectAllFeedbacks, selectSelectedFeedback } from './selectors';
 import { EditFeedbackInfo, NewFeedbackInfo } from './types';
 

@@ -19,6 +19,11 @@ const slice = createSlice({
   name: 'userManagement',
   initialState,
   reducers: {
+    resetState() {
+      return {
+        ...initialState,
+      };
+    },
     getAllUsersAtPage() {},
     selectUser(state, action: PayloadAction<number>) {
       return {

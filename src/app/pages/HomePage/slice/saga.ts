@@ -5,13 +5,15 @@ import { homepageActions as actions } from '.';
 import { selectUserInfo } from './selectors';
 import { LoginPayload } from './types';
 import { userManagementPageActions } from 'app/pages/UserManagementPage/slice';
+import { feedbacksPageActions } from 'app/pages/FeedbacksPage/slice';
 
 export const SERVER_URL = 'http://localhost:3001';
 
 export function* userLogout() {
   localStorage.removeItem('token');
-  yield put(actions.updateUser(null));
-  yield put(userManagementPageActions.updateUsers([]));
+  yield put(actions.resetState());
+  yield put(feedbacksPageActions.resetState());
+  yield put(userManagementPageActions.resetState());
 }
 
 export function* getSelfData(token: string) {

@@ -19,6 +19,11 @@ const slice = createSlice({
   name: 'feedbacksPage',
   initialState,
   reducers: {
+    resetState() {
+      return {
+        ...initialState,
+      };
+    },
     getAllFeedbacks() {},
     selectFeedback(state, action: PayloadAction<number>) {
       return {
@@ -46,7 +51,7 @@ const slice = createSlice({
   },
 });
 
-export const { actions: FeedbacksPageActions, reducer } = slice;
+export const { actions: feedbacksPageActions, reducer } = slice;
 
 export const useFeedbacksPageSlice = () => {
   useInjectReducer({ key: slice.name, reducer: slice.reducer });
