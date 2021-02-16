@@ -1,45 +1,45 @@
 import * as React from 'react';
 import styled from 'styled-components/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { useUserManagementPageSlice } from '../slice';
+import { useFeedbacksPageSlice } from '../slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Title } from './Title';
 import {
-  selectAllUsers,
+  selectAllFeedbacks,
   selectIsLoading,
-  selectSelectedUser,
+  selectSelectedFeedback,
 } from '../slice/selectors';
 import { LoadingIndicator } from 'app/components/LoadingIndicator';
 import { useSortBy, useTable } from 'react-table';
-import { UserDataForm } from './UserDataForm';
+import { FeedbackDetailForm } from './FeedbackDetailForm';
 
-export function UserTable() {
-  const { actions } = useUserManagementPageSlice();
+export function FeedbacksTable() {
+  const { actions } = useFeedbacksPageSlice();
   const dispatch = useDispatch();
 
-  const users = useSelector(selectAllUsers);
-  const selectedUser = useSelector(selectSelectedUser);
-  const data = useMemo(() => users, [users]);
+  const feedbacks = useSelector(selectAllFeedbacks);
+  const selectedFeedback = useSelector(selectSelectedFeedback);
+  const data = useMemo(() => feedbacks, [feedbacks]);
 
-  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [isCreatingFeedback, setIsCreatingFeedback] = useState(false);
 
   const onEditClick = useMemo(
     () => id => {
-      dispatch(actions.selectUser(id));
-      setIsCreatingUser(false);
+      dispatch(actions.selectFeedback(id));
+      setIsCreatingFeedback(false);
     },
     [actions, dispatch],
   );
 
   const onAddNewClick = () => {
-    dispatch(actions.selectUser(-1));
-    setIsCreatingUser(true);
+    dispatch(actions.selectFeedback(-1));
+    setIsCreatingFeedback(true);
   };
 
   const onRemoveClick = useMemo(
     () => id => {
-      dispatch(actions.removeUser(id));
-      setIsCreatingUser(false);
+      dispatch(actions.removeFeedback(id));
+      setIsCreatingFeedback(false);
     },
     [actions, dispatch],
   );
@@ -47,32 +47,23 @@ export function UserTable() {
   const columns = useMemo(
     () => [
       {
-        Header: 'User Info',
+        Header: 'Feedback Info',
         columns: [
           {
             Header: 'Id',
             accessor: 'id',
           },
           {
-            Header: 'Name',
-            accessor: 'username',
+            Header: 'Description',
+            accessor: 'description',
           },
           {
-            Header: 'Role',
-            accessor: 'role',
-          },
-        ],
-      },
-      {
-        Header: 'Feedback Info',
-        columns: [
-          {
-            Header: 'Total Assigned Feedback',
-            accessor: 'totalAssignedFeedbacks',
+            Header: 'Given By',
+            accessor: 'givenById',
           },
           {
-            Header: 'Done Feedback',
-            accessor: 'doneFeedbacks',
+            Header: 'Belongs to',
+            accessor: 'belongsToId',
           },
         ],
       },
@@ -82,7 +73,12 @@ export function UserTable() {
           {
             Header: 'Edit',
             Cell: ({ cell }) => (
-              <button onClick={() => onEditClick(cell.row.id)}>Edit</button>
+              <button
+                disabled={cell.row.values.description.length > 0}
+                onClick={() => onEditClick(cell.row.id)}
+              >
+                Edit
+              </button>
             ),
           },
           {
@@ -108,30 +104,33 @@ export function UserTable() {
   } = useTable({ columns, data }, useSortBy);
 
   useEffect(() => {
-    if (users.length === 0) {
-      dispatch(actions.getAllUsersAtPage());
+    if (feedbacks.length === 0) {
+      dispatch(actions.getAllFeedbacks());
     }
-  }, [actions, dispatch, users.length]);
+  }, [actions, dispatch, feedbacks.length]);
 
   const loading = useSelector(selectIsLoading);
 
   const onCloseButtonClick = () => {
-    dispatch(actions.selectUser(-1));
-    setIsCreatingUser(false);
+    dispatch(actions.selectFeedback(-1));
+    setIsCreatingFeedback(false);
   };
   return (
     <Wrapper>
       {loading && <LoadingIndicator />}
 
-      {isCreatingUser ? (
-        <UserDataForm onCloseButtonClick={onCloseButtonClick} />
+      {isCreatingFeedback ? (
+        <FeedbackDetailForm onCloseButtonClick={onCloseButtonClick} />
       ) : (
-        selectedUser && (
-          <UserDataForm isEditing onCloseButtonClick={onCloseButtonClick} />
+        selectedFeedback && (
+          <FeedbackDetailForm
+            isEditing
+            onCloseButtonClick={onCloseButtonClick}
+          />
         )
       )}
 
-      <Title>Users Table</Title>
+      <Title>Feedbacks Table</Title>
       <StyledDiv>
         <table {...getTableProps()}>
           <thead>
@@ -160,7 +159,7 @@ export function UserTable() {
             })}
           </tbody>
         </table>
-        <Button onClick={onAddNewClick}>Add New User</Button>
+        <Button onClick={onAddNewClick}>Add New Feedback</Button>
       </StyledDiv>
     </Wrapper>
   );

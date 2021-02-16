@@ -9,18 +9,23 @@ class UserController {
   static listAll = async (req: Request, res: Response) => {
     //Get users from database
     const userRepository = getRepository(User);
-    const users = await userRepository.find({
-      select: [
-        'id',
-        'username',
-        'totalAssignedFeedbacks',
-        'doneFeedbacks',
-        'role',
-      ],
-    });
-
-    //Send the users object
-    res.send(users);
+    //todo generate totalAssignedFeedbacks and doneFeedbacks
+    // const feedbackRepository = getRepository(Feedback);
+    try {
+      const users = await userRepository.find({
+        select: [
+          'id',
+          'username',
+          // 'totalAssignedFeedbacks',
+          // 'doneFeedbacks',
+          'role',
+        ],
+      });
+      res.send(users);
+    } catch (e) {
+      res.status(500).send({ message: 'Error while getting feedback', e });
+      return;
+    }
   };
 
   static getSelf = async (req: Request, res: Response) => {
@@ -31,8 +36,8 @@ class UserController {
       select: [
         'id',
         'username',
-        'totalAssignedFeedbacks',
-        'doneFeedbacks',
+        // 'totalAssignedFeedbacks',
+        // 'doneFeedbacks',
         'role',
       ],
     });
@@ -61,8 +66,8 @@ class UserController {
         select: [
           'id',
           'username',
-          'totalAssignedFeedbacks',
-          'doneFeedbacks',
+          // 'totalAssignedFeedbacks',
+          // 'doneFeedbacks',
           'role',
         ],
       });

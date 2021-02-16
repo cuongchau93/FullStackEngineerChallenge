@@ -1,19 +1,55 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { validate } from 'class-validator';
-import { User } from '../entity/User';
 import { Feedback } from '../entity/Feedback';
 
 class FeedbackController {
+  static listAll = async (req: Request, res: Response) => {
+    const feedbackRepository = getRepository(Feedback);
+
+    try {
+      const feedbacks = await feedbackRepository.find({
+        select: ['id', 'description', 'givenById', 'belongsToId'],
+      });
+      res.send(feedbacks);
+    } catch (e) {
+      res.status(500).send({ message: 'Error while getting feedback', e });
+      return;
+    }
+  };
+
+  static getAllSelf = async (req: Request, res: Response) => {
+    const feedbackRepository = getRepository(Feedback);
+    const self = res.locals.jwtPayload.userId;
+
+    try {
+      const feedbacks = await feedbackRepository.find({
+        where: [
+          // getting all given or own feedbacks
+          {
+            belongsTo: self,
+          },
+          {
+            givenBy: self,
+          },
+        ],
+        select: ['id', 'description', 'givenBy', 'belongsTo'],
+      });
+      res.send(feedbacks);
+    } catch (e) {
+      res.status(500).send({ message: 'Error while getting feedback', e });
+      return;
+    }
+  };
+
   static newFeedback = async (req: Request, res: Response) => {
     //Get parameters from the body
-    let { description, belongsTo } = req.body;
-    const creatorId = res.locals.jwtPayload.userId;
+    let { description, belongsToId, givenById } = req.body;
 
     let feedback = new Feedback();
     feedback.description = description;
-    feedback.givenBy = creatorId;
-    feedback.belongsTo = belongsTo;
+    feedback.givenById = givenById;
+    feedback.belongsToId = belongsToId;
 
     //Validade if the parameters are ok
     const errors = await validate(feedback);

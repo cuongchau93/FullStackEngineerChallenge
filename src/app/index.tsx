@@ -16,6 +16,7 @@ import { NotFoundPage } from './pages/NotFoundPage/Loadable';
 import { useTranslation } from 'react-i18next';
 import { UserManagementPage } from './pages/UserManagementPage/Loadable';
 import { useCheckAuthentication } from 'utils/useCheckAuthentication';
+import { FeedbacksPage } from './pages/FeedbacksPage/Loadable';
 
 export function App() {
   const { i18n } = useTranslation();
@@ -39,11 +40,11 @@ export function App() {
           path={process.env.PUBLIC_URL + '/users'}
           component={UserManagementPage}
         />
-        {/* <Route
+        <Route
           exact
           path={process.env.PUBLIC_URL + '/feedbacks'}
           component={FeedbacksPage}
-        /> */}
+        />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />

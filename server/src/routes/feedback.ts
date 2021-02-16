@@ -1,17 +1,24 @@
-import { Router } from "express";
-  import FeedbackController from "../controllers/FeedbackController";
-  import { checkJwt } from "../middlewares/checkJwt";
+import { Router } from 'express';
+import FeedbackController from '../controllers/FeedbackController';
+import { checkJwt } from '../middlewares/checkJwt';
+import { checkRole } from '../middlewares/checkRole';
 
-  const router = Router();
+const router = Router();
 
-  //Create a new feedback
-  router.post("/", [checkJwt], FeedbackController.newFeedback);
+//Get all feedbacks
+router.get('/', [checkJwt, checkRole(['ADMIN'])], FeedbackController.listAll);
 
-  //Delete one feedback
-  router.delete(
-    "/:id([0-9]+)",
-    [checkJwt],
-    FeedbackController.deleteFeedback
-  );
+//Get all self feedbacks
+router.post(
+  '/self',
+  [checkJwt, checkRole(['ADMIN'])],
+  FeedbackController.getAllSelf,
+);
 
-  export default router;
+//Create a new feedback
+router.post('/', [checkJwt], FeedbackController.newFeedback);
+
+//Delete one feedback
+router.delete('/:id([0-9]+)', [checkJwt], FeedbackController.deleteFeedback);
+
+export default router;

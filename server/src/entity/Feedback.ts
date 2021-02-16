@@ -2,13 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
-import { Length, IsNotEmpty } from 'class-validator';
+import { Length } from 'class-validator';
 import { User } from './User';
 
 @Entity()
@@ -17,16 +16,24 @@ export class Feedback {
   id: number;
 
   @Column()
-  @Length(4, 400)
+  @Length(0, 400) // we use length===0 for knowing pending feedback
   description: string;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  // one person can give multiple feedback
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
   @JoinColumn()
   givenBy: User;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  // one person can receive multiple feedback
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
   @JoinColumn()
   belongsTo: User;
+
+  @Column({ nullable: true })
+  givenById: string;
+
+  @Column({ nullable: true })
+  belongsToId: string;
 
   @Column()
   @CreateDateColumn()

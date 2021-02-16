@@ -5,12 +5,6 @@ export interface MyJWT {
   exp: number;
 }
 
-interface Feedback {
-  id: number;
-  description: string;
-  givenBy: number;
-}
-
 export interface NewUserInfo {
   username: string;
   password: string;
@@ -25,7 +19,6 @@ export interface UserInfo {
   username: string;
   role: string;
   token: string;
-  feedbacks: Feedback[];
 }
 
 export interface UserManagementState {

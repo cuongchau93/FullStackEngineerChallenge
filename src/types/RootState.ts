@@ -1,3 +1,4 @@
+import { FeedbacksPageState } from 'app/pages/FeedbacksPage/slice/types';
 import { HomeState } from 'app/pages/HomePage/slice/types';
 import { UserManagementState } from 'app/pages/UserManagementPage/slice/types';
 import { ThemeState } from 'styles/theme/slice/types';
@@ -14,4 +15,5 @@ export interface RootState {
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
   home: HomeState;
   userManagement: UserManagementState;
+  feedbacksPage: FeedbacksPageState;
 }
